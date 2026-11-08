@@ -2,6 +2,7 @@ const header = document.querySelector('.header');
 const toggle = header.querySelector('.menu-toggle');
 const navigation = document.getElementById('main-navigation');
 const mobile = window.matchMedia('(max-width: 760px)');
+header.classList.add('menu-enhanced');
 
 function setMenu(open, returnFocus = false) {
     header.classList.toggle('menu-open', open);
@@ -15,7 +16,15 @@ toggle.addEventListener('click', () => {
 });
 
 navigation.addEventListener('click', (event) => {
-    if (mobile.matches && event.target.closest('a')) setMenu(false, true);
+    const link = event.target.closest('a');
+    if (!mobile.matches || !link) return;
+    setMenu(false);
+    const target = document.getElementById(link.hash.slice(1));
+    if (target) {
+        target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+    }
 });
 
 document.addEventListener('click', (event) => {
